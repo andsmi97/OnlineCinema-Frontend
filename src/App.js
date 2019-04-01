@@ -1,28 +1,44 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import React, { Component } from "react";
+import AppDrawer from "./Components/Drawer";
+import Auth from "./Components/Auth";
+import { connect } from "react-redux";
+import { authenticate } from "./actions";
+import { withStyles } from "@material-ui/core/styles";
+const styles = theme => ({
+  root: {
+    height: "100vh",
+    justifyContent: "center",
+    alignItems: "center",
+    display: "flex"
+  }
+});
+const mapStateToProps = state => {
+  return {
+    isResponseCorrect: state.authReducer.isResponseCorrect
+  };
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    onAuth: () => dispatch(authenticate())
+  };
+};
 class App extends Component {
+  componentDidMount() {
+    this.props.onAuth();
+  }
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+    const { classes } = this.props;
+    return this.props.isResponseCorrect ? (
+      <AppDrawer />
+    ) : (
+      <div className={classes.root}>
+        <Auth />
       </div>
     );
   }
 }
 
-export default App;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(App));
